@@ -63,8 +63,6 @@ public class Constants
 
     public static final String DISCOVERY = "discovery";
 
-    public static final String PROVISION = "provision";
-
     public static final String RUN_DISCOVERY = "run.discovery";
 
     public static final String CONTENT_TYPE = "Content-Type";
@@ -86,6 +84,8 @@ public class Constants
     public static final String PROFILES = "profiles";
 
     public static final String VALID_PROFILES = "validProfiles";
+
+    public static final String ZMQ_PORT = "zmq.port";
 
 
 }

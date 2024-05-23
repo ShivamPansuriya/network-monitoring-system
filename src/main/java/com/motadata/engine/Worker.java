@@ -1,7 +1,7 @@
 package com.motadata.engine;
 
 import com.motadata.constants.Constants;
-import com.motadata.database.ConfigDB;
+import com.motadata.database.DiscoveryDB;
 import com.motadata.utils.ProcessBuilder;
 import com.motadata.utils.Utils;
 import io.vertx.core.AbstractVerticle;
@@ -40,7 +40,7 @@ public class Worker extends AbstractVerticle
                 {
                     var profile = Utils.createContext(result);
 
-                    ConfigDB.getDatabase(Constants.DISCOVERY).create(Long.parseLong(result.getString(Constants.DISCOVERY_ID)),profile);
+                    DiscoveryDB.getInstance().create(Long.parseLong(result.getString(Constants.DISCOVERY_ID)),profile);
                 }
             }
         });
@@ -75,6 +75,8 @@ public class Worker extends AbstractVerticle
                 }
             }
         });
+
+
         startPromise.complete();
     }
 }

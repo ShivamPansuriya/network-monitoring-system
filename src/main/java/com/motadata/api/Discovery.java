@@ -1,7 +1,8 @@
 package com.motadata.api;
 
 import com.motadata.constants.Constants;
-import com.motadata.database.ConfigDB;
+import com.motadata.database.CredentialDB;
+import com.motadata.database.DiscoveryDB;
 import com.motadata.utils.Profile;
 import com.motadata.utils.Utils;
 import io.vertx.core.Vertx;
@@ -22,7 +23,7 @@ public class Discovery implements Profile
 
     private final EventBus eventBus;
 
-    private final ConfigDB database = ConfigDB.getDatabase(Constants.DISCOVERY);
+    private final DiscoveryDB database = DiscoveryDB.getInstance();
 
     private final Router DiscoveryRouter;
 
@@ -83,7 +84,7 @@ public class Discovery implements Profile
     @Override
     public void getAllProfile(RoutingContext ctx)
     {
-        var response = new JsonObject().put(Constants.RESULT, database.get(Constants.PROFILES));
+        var response = new JsonObject().put(Constants.RESULT, database.getAll(Constants.PROFILES));
 
         response.put(Constants.STATUS,Constants.STATUS_SUCCESS);
 
@@ -103,7 +104,7 @@ public class Discovery implements Profile
             {
                 if(!request.getString(Constants.IP).isEmpty() && !request.getString(Constants.PORT).isEmpty() && !request.getString(Constants.NAME).isEmpty() && !request.getString(Constants.CREDENTIALS).isEmpty())
                 {
-                    var profiles = database.get(Constants.PROFILES);
+                    var profiles = database.getAll(Constants.PROFILES);
 
                     for(var profile : profiles)
                     {
@@ -114,7 +115,7 @@ public class Discovery implements Profile
                             break;
                         }
                     }
-                    var credentialDatabase = ConfigDB.getDatabase(Constants.CREDENTIAL);
+                    var credentialDatabase = CredentialDB.getInstance();
 
                     for(var id : request.getJsonArray(Constants.CREDENTIALS))
                     {
@@ -293,7 +294,7 @@ public class Discovery implements Profile
 
                 for(var credentialId : credentialIds)
                 {
-                    var credentialProfile = ConfigDB.getDatabase(Constants.CREDENTIAL).get(Long.parseLong(credentialId.toString()),Constants.PROFILES);
+                    var credentialProfile = CredentialDB.getInstance().get(Long.parseLong(credentialId.toString()),Constants.PROFILES);
 
                     credentialProfile.put(Constants.CREDENTIAL_ID, Long.parseLong(credentialId.toString()));
 

@@ -1,7 +1,8 @@
 package com.motadata.api;
 
 import com.motadata.constants.Constants;
-import com.motadata.database.ConfigDB;
+import com.motadata.database.DiscoveryDB;
+import com.motadata.database.ProvisionDB;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
@@ -18,7 +19,7 @@ public class Provision
 
     private final Router provisionRouter;
 
-    private final ConfigDB database = ConfigDB.getDatabase(Constants.PROVISION);
+    private final ProvisionDB database = ProvisionDB.getInstance();
 
     public Provision(Vertx vertx, Router router)
     {
@@ -40,7 +41,7 @@ public class Provision
 
     public void getAllProfile(RoutingContext ctx)
     {
-        var response = new JsonObject().put(Constants.RESULT, database.get(Constants.VALID_PROFILES));
+        var response = new JsonObject().put(Constants.RESULT, database.getAll(Constants.VALID_PROFILES));
 
         response.put(Constants.STATUS, Constants.STATUS_SUCCESS);
 
@@ -51,7 +52,7 @@ public class Provision
     {
         var response = new JsonObject();
 
-        if(ConfigDB.getDatabase(Constants.DISCOVERY).present(Long.parseLong(ctx.request().getParam(Constants.ID))))
+        if(DiscoveryDB.getInstance().present(Long.parseLong(ctx.request().getParam(Constants.ID))))
         {
             var object = database.get(Long.parseLong(ctx.request().getParam(Constants.ID)),Constants.VALID_PROFILES);
 
@@ -61,7 +62,7 @@ public class Provision
 
                 object.put(Constants.PROVISION_ID, id);
 
-                database.update(object, Long.parseLong(ctx.request().getParam(Constants.ID)),"validProfiles");
+                database.update(object, Long.parseLong(ctx.request().getParam(Constants.ID)),Constants.VALID_PROFILES);
 
                 response.put(Constants.PROVISION_ID, id);
 

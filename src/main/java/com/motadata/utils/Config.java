@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 
 public class Config
 {
@@ -25,7 +24,7 @@ public class Config
 
     public static int POLL_TIME;
 
-    public static int WORKER_INSTANCE;
+    public static int ZMQ_PORT;
 
     static
     {
@@ -40,6 +39,9 @@ public class Config
         PROCESS_TIMEOUT = Math.max(35,Math.min(config.getInteger(Constants.PROCESS_TIMEOUT,60) , 60));
 
         POLL_TIME = config.getInteger(Constants.POLL_TIME,60);
+
+        ZMQ_PORT = config.getInteger(Constants.ZMQ_PORT,9090);
+
     }
 
     private static JsonObject loadConfig()

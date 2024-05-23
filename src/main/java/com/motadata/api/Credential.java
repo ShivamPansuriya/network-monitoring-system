@@ -1,7 +1,7 @@
 package com.motadata.api;
 
 import com.motadata.constants.Constants;
-import com.motadata.database.ConfigDB;
+import com.motadata.database.CredentialDB;
 import com.motadata.utils.Profile;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -19,7 +19,7 @@ public class Credential implements Profile
 
     private final Router credentialRouter;
 
-    private final ConfigDB database = ConfigDB.getDatabase(Constants.CREDENTIAL);
+    private final CredentialDB database = CredentialDB.getInstance();
 
     public Credential(Vertx vertx, Router router)
     {
@@ -71,7 +71,7 @@ public class Credential implements Profile
     @Override
     public void getAllProfile(RoutingContext ctx)
     {
-        var response = new JsonObject().put(Constants.RESULT, database.get(Constants.PROFILES));
+        var response = new JsonObject().put(Constants.RESULT, database.getAll(Constants.PROFILES));
 
         response.put(Constants.STATUS,Constants.STATUS_SUCCESS);
 
@@ -92,7 +92,7 @@ public class Credential implements Profile
             {
                 if(!request.getString(Constants.USERNAME).isEmpty() && !request.getString(Constants.PASSWORD).isEmpty() && !request.getString(Constants.NAME).isEmpty())
                 {
-                    var profiles = database.get(Constants.PROFILES);
+                    var profiles = database.getAll(Constants.PROFILES);
 
                     for(var profile : profiles)
                     {

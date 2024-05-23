@@ -1,8 +1,7 @@
 package com.motadata;
 
 import com.motadata.api.ApiEngine;
-import com.motadata.constants.Constants;
-import com.motadata.database.ConfigDB;
+import com.motadata.engine.AgentHandler;
 import com.motadata.engine.Scheduler;
 import com.motadata.engine.Worker;
 import com.motadata.utils.Config;
@@ -20,22 +19,25 @@ public class Bootstrap
     {
         logger.info("Application started");
 
-        var vertx = Vertx.vertx();
+        if(Config.PORT == Config.ZMQ_PORT)
+        {
+            System.out.println("multiple ports can't be same");
 
+            logger.error("both given port zmq and host.port are same");
+
+            return;
+        }
+        var vertx = Vertx.vertx();
 
         try
         {
-            ConfigDB.createDatabase(Constants.DISCOVERY);
-
-            ConfigDB.createDatabase(Constants.CREDENTIAL);
-
-            ConfigDB.createDatabase(Constants.PROVISION);
-
             vertx.deployVerticle(Worker.class.getName(), new DeploymentOptions().setThreadingModel(ThreadingModel.WORKER))
 
                     .compose(id -> vertx.deployVerticle(Scheduler.class.getName()))
 
                     .compose(id -> vertx.deployVerticle(ApiEngine.class.getName()))
+
+                    .compose(id-> vertx.deployVerticle(AgentHandler.class.getName()))
 
                     .onSuccess(handler-> logger.info("Application verticals deployed"))
 

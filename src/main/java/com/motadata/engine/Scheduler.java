@@ -1,7 +1,7 @@
 package com.motadata.engine;
 
 import com.motadata.constants.Constants;
-import com.motadata.database.ConfigDB;
+import com.motadata.database.ProvisionDB;
 import com.motadata.utils.Config;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -24,7 +24,7 @@ public class Scheduler extends AbstractVerticle
         {
             validPollID.clear();
 
-            var contexts = ConfigDB.getDatabase(Constants.PROVISION).get(Constants.PROFILES);
+            var contexts = ProvisionDB.getInstance().getAll(Constants.PROFILES);
 
             logger.debug("getting data for {}",contexts);
 

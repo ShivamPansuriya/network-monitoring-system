@@ -1,7 +1,6 @@
 package com.motadata.utils;
 
 import com.motadata.constants.Constants;
-import com.motadata.engine.Worker;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -9,8 +8,6 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.OpenOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,9 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Utils
 {
-    static final Logger logger = LoggerFactory.getLogger(Worker.class);
-
-
     private static final AtomicLong counter = new AtomicLong(0);
 
     public static long generateID()
@@ -42,18 +36,9 @@ public class Utils
 
         var buffer = Buffer.buffer(data.encodePrettily()).appendString(",\n");
 
-        vertx.fileSystem().openBlocking(fileName,new OpenOptions().setAppend(true).setCreate(true)).write(buffer).onComplete(handler->
-        {
-            logger.info("Content written to file");
-
-            promise.complete();
-
-        }).onFailure(handler->
-        {
-            logger.warn("Error occurred while opening the file {}",handler.getCause().toString());
-
-            promise.fail(handler.getCause());
-        });
+        vertx.fileSystem().openBlocking(fileName,new OpenOptions().setAppend(true).setCreate(true)).write(buffer)
+                .onComplete(handler-> promise.complete())
+                .onFailure(handler-> promise.fail(handler.getCause()));
 
         return promise.future();
     }
